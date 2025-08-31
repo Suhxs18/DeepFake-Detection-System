@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Financial Profile - Finance Advisor{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    {% if action == 'Create' %}
+                        <i class="fas fa-plus-circle me-2"></i>Create Your Financial Profile
+                    {% else %}
+                        <i class="fas fa-edit me-2"></i>Update Your Financial Profile
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Please provide accurate financial information to receive personalized investment advice.
+                    All monetary values should be in Indian Rupees (₹).
+                </p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Personal Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_name" class="form-label">Full Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_age" class="form-label">Age</label>
+                            {{ form.age }}
+                            {% if form.age.errors %}
+                                <div class="text-danger">{{ form.age.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_occupation" class="form-label">Occupation</label>
+                            {{ form.occupation }}
+                            {% if form.occupation.errors %}
+                                <div class="text-danger">{{ form.occupation.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="id_family_size" class="form-label">Family Size</label>
+                            {{ form.family_size }}
+                            {% if form.family_size.errors %}
+                                <div class="text-danger">{{ form.family_size.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Financial Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Financial Information</h5>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_monthly_income" class="form-label">Monthly Income (₹)</label>
+                            {{ form.monthly_income }}
+                            {% if form.monthly_income.errors %}
+                                <div class="text-danger">{{ form.monthly_income.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_monthly_expenses" class="form-label">Monthly Expenses (₹)</label>
+                            {{ form.monthly_expenses }}
+                            {% if form.monthly_expenses.errors %}
+                                <div class="text-danger">{{ form.monthly_expenses.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_monthly_savings" class="form-label">Monthly Savings (₹)</label>
+                            {{ form.monthly_savings }}
+                            {% if form.monthly_savings.errors %}
+                                <div class="text-danger">{{ form.monthly_savings.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="id_current_debts" class="form-label">Current Debts (₹)</label>
+                            {{ form.current_debts }}
+                            {% if form.current_debts.errors %}
+                                <div class="text-danger">{{ form.current_debts.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="id_debt_interest_rate" class="form-label">Debt Interest Rate (%)</label>
+                            {{ form.debt_interest_rate }}
+                            {% if form.debt_interest_rate.errors %}
+                                <div class="text-danger">{{ form.debt_interest_rate.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Investment Profile -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Investment Profile</h5>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_risk_tolerance" class="form-label">Risk Tolerance</label>
+                            {{ form.risk_tolerance }}
+                            {% if form.risk_tolerance.errors %}
+                                <div class="text-danger">{{ form.risk_tolerance.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ form.risk_tolerance.help_text }}</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_investment_goal" class="form-label">Investment Goal</label>
+                            {{ form.investment_goal }}
+                            {% if form.investment_goal.errors %}
+                                <div class="text-danger">{{ form.investment_goal.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Your primary investment objective</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_investment_knowledge" class="form-label">Investment Knowledge</label>
+                            {{ form.investment_knowledge }}
+                            {% if form.investment_knowledge.errors %}
+                                <div class="text-danger">{{ form.investment_knowledge.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ form.investment_knowledge.help_text }}</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                {{ form.has_investment_experience }}
+                                <label class="form-check-label" for="id_has_investment_experience">
+                                    Have Previous Investment Experience
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="id_previous_investments" class="form-label">Previous Investments</label>
+                            {{ form.previous_investments }}
+                            {% if form.previous_investments.errors %}
+                                <div class="text-danger">{{ form.previous_investments.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ form.previous_investments.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Goals -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Financial Goals</h5>
+                        </div>
+
+                        <!-- Short-term Goals -->
+                        <div class="col-12 mb-3">
+                            <h6>Short-term Goals (1-3 years)</h6>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="id_short_term_goals" class="form-label">Goals Description</label>
+                            {{ form.short_term_goals }}
+                            {% if form.short_term_goals.errors %}
+                                <div class="text-danger">{{ form.short_term_goals.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_short_term_goal_amount" class="form-label">Required Amount (₹)</label>
+                            {{ form.short_term_goal_amount }}
+                            {% if form.short_term_goal_amount.errors %}
+                                <div class="text-danger">{{ form.short_term_goal_amount.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Medium-term Goals -->
+                        <div class="col-12 mb-3">
+                            <h6>Medium-term Goals (5-10 years)</h6>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="id_medium_term_goals" class="form-label">Goals Description</label>
+                            {{ form.medium_term_goals }}
+                            {% if form.medium_term_goals.errors %}
+                                <div class="text-danger">{{ form.medium_term_goals.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_medium_term_goal_amount" class="form-label">Required Amount (₹)</label>
+                            {{ form.medium_term_goal_amount }}
+                            {% if form.medium_term_goal_amount.errors %}
+                                <div class="text-danger">{{ form.medium_term_goal_amount.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Long-term Goals -->
+                        <div class="col-12 mb-3">
+                            <h6>Long-term Goals (10+ years)</h6>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="id_long_term_goals" class="form-label">Goals Description</label>
+                            {{ form.long_term_goals }}
+                            {% if form.long_term_goals.errors %}
+                                <div class="text-danger">{{ form.long_term_goals.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_long_term_goal_amount" class="form-label">Required Amount (₹)</label>
+                            {{ form.long_term_goal_amount }}
+                            {% if form.long_term_goal_amount.errors %}
+                                <div class="text-danger">{{ form.long_term_goal_amount.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Additional Information</h5>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="id_other_assets" class="form-label">Other Assets</label>
+                            {{ form.other_assets }}
+                            {% if form.other_assets.errors %}
+                                <div class="text-danger">{{ form.other_assets.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ form.other_assets.help_text }}</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="id_retirement_plans" class="form-label">Retirement Plans</label>
+                            {{ form.retirement_plans }}
+                            {% if form.retirement_plans.errors %}
+                                <div class="text-danger">{{ form.retirement_plans.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ form.retirement_plans.help_text }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            {% if action == 'Create' %}
+                                <i class="fas fa-save me-2"></i>Create Profile
+                            {% else %}
+                                <i class="fas fa-save me-2"></i>Update Profile
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
