@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Investment Advice - Finance Advisor{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Investment Advice</h4>
+                <a href="{% url 'new_advice' %}" class="btn btn-success btn-sm">
+                    <i class="fas fa-sync-alt me-1"></i>Generate New Advice
+                </a>
+            </div>
+            <div class="card-body">
+                <h3 class="mb-2">{{ advice.title }}</h3>
+                <p class="text-muted">Generated on {{ advice.created_at|date:"F d, Y" }}</p>
+                
+                <div class="advice-content mb-4">
+                    {{ advice.content|safe }}
+                </div>
+                
+                <hr>
+                
+                <h5 class="mb-3"><i class="fas fa-comments me-2"></i>Chat with Financial Advisor</h5>
+                <p class="text-muted mb-3">Ask questions about this investment advice or get more specific recommendations.</p>
+                
+                <div id="chat-container" class="chat-container mb-3">
+                    {% if chat_messages %}
+                        {% for msg in chat_messages %}
+                            <div class="chat-message {% if msg.message_type == 'user' %}user-message{% else %}advisor-message{% endif %}">
+                                <div>
+                                    {% if msg.message_type == 'advisor' %}
+                                        {{ msg.content|safe }}
+                                    {% else %}
+                                        {{ msg.content }}
+                                    {% endif %}
+                                </div>
+                                <div class="chat-timestamp">{{ msg.timestamp|date:"M d, Y H:i" }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-robot fa-3x mb-3 text-muted"></i>
+                            <p>Start chatting with your AI financial advisor to get more personalized investment guidance.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <form id="chat-form" class="d-flex">
+                    <input type="text" id="chat-input" class="form-control me-2" placeholder="Ask about your investment options...">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+                
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                        </a>
+                        <a href="{% url 'advice_history' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-history me-1"></i>View Advice History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Scroll chat to bottom on page load
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Chat functionality
+        $('#chat-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            const userMessage = $('#chat-input').val().trim();
+            if (!userMessage) return;
+            
+            // Add user message to chat
+            $('#chat-container').append(`
+                <div class="chat-message user-message">
+                    <div>${userMessage}</div>
+                    <div class="chat-timestamp">Just now</div>
+                </div>
+            `);
+            
+            // Clear input
+            $('#chat-input').val('');
+            
+            // Scroll to bottom
+            $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+            
+            // Show loading indicator
+            $('#chat-container').append(`
+                <div id="loading-message" class="chat-message advisor-message">
+                    <div><i class="fas fa-spinner fa-spin"></i> Thinking...</div>
+                </div>
+            `);
+            
+            // Scroll to bottom
+            $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+            
+            // Send message to server
+            $.ajax({
+                url: '{% url "chat_api" %}',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: userMessage }),
+                success: function(data) {
+                    // Remove loading indicator
+                    $('#loading-message').remove();
+                    
+                    // Add advisor response - using html() to properly render HTML content
+                    const advisorMessageDiv = $('<div class="chat-message advisor-message"></div>');
+                    const contentDiv = $('<div></div>').html(data.response_html || data.response);
+                    const timestampDiv = $('<div class="chat-timestamp">Just now</div>');
+                    
+                    advisorMessageDiv.append(contentDiv).append(timestampDiv);
+                    $('#chat-container').append(advisorMessageDiv);
+                    
+                    // Scroll to bottom
+                    $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+                },
+                error: function(xhr) {
+                    // Remove loading indicator
+                    $('#loading-message').remove();
+                    
+                    // Show error message
+                    $('#chat-container').append(`
+                        <div class="chat-message advisor-message">
+                            <div class="text-danger">Sorry, I couldn't process your request. Please try again.</div>
+                            <div class="chat-timestamp">Just now</div>
+                        </div>
+                    `);
+                    
+                    // Scroll to bottom
+                    $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
